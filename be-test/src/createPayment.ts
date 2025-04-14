@@ -1,9 +1,18 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { buildResponse, parseInput } from './lib/apigateway';
-import { createPayment, Payment } from './lib/payments';
+import { createPayment, Payment, generateUniqueUUID } from './lib/payments';
+
+export type CreatePaymentPayload = {
+    amount: number;
+    currency: string;
+};
+
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const payment = parseInput(event.body || '{}') as Payment;
+    const paymentPayload = parseInput(event.body || '{}') as CreatePaymentPayload;
+
+    const payment: Payment = { ...paymentPayload, id: generateUniqueUUID() }
+
     await createPayment(payment);
-    return buildResponse(201, { result: payment.id });
+    return buildResponse(201, { paymentId: payment.id });
 };

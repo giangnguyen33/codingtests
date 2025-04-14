@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { DocumentClient } from './dynamodb';
 import { GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
@@ -36,3 +37,8 @@ export type Payment = {
     amount: number;
     currency: string;
 };
+
+// TODO: paymentId need to be unique and implement properly, for now I just return randomUUID
+export const generateUniqueUUID = (): string => {
+    return randomUUID().toString();
+}
