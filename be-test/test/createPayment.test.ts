@@ -4,15 +4,14 @@ import * as payments from '../src/lib/payments';
 
 
 
-describe.only('When the user create payment', () => {
-    it('should create payment and return unique paymentId', async () => {
+describe('When the user create payment', () => {
+    it('should create payment and return unique paymentId when valid payload', async () => {
         const mockPaymentId: string = 'mock paymentId'
         const createPaymentPayload: CreatePaymentPayload = {
             currency: 'AUD',
             amount: 2000,
         };
 
-        //const mock = jest.spyOn(payments, 'generateUniqueUUID');
         const generateUniqueUUIDMock = jest.spyOn(payments, 'generateUniqueUUID').mockReturnValue(mockPaymentId);
         const createPaymentMock = jest.spyOn(payments, 'createPayment').mockImplementation();
 
@@ -29,6 +28,50 @@ describe.only('When the user create payment', () => {
             currency: "AUD",
             id: "mock paymentId",
         });
+
+    })
+
+    it('should return bad request 422 when amount and currenty is empty', async () => {
+        const mockPaymentId: string = 'mock paymentId'
+        const createPaymentPayload = {
+            currency: '',
+            amount: '',
+        };
+
+        const generateUniqueUUIDMock = jest.spyOn(payments, 'generateUniqueUUID').mockReturnValue(mockPaymentId);
+        const createPaymentMock = jest.spyOn(payments, 'createPayment').mockImplementation();
+
+        const result = await handler({
+            body: JSON.stringify(createPaymentPayload)
+        } as unknown as APIGatewayProxyEvent);
+
+        expect(result.statusCode).toBe(422);
+        expect(JSON.parse(result.body)).toEqual({ errors: ["amount is required", "currency is required"] });
+
+        expect(generateUniqueUUIDMock).not.toHaveBeenCalled();
+        expect(createPaymentMock).not.toHaveBeenCalled();
+
+    })
+
+    it('should return bad request 422 when amount is not number', async () => {
+        const mockPaymentId: string = 'mock paymentId'
+        const createPaymentPayload = {
+            currency: '',
+            amount: 'abc',
+        };
+
+        const generateUniqueUUIDMock = jest.spyOn(payments, 'generateUniqueUUID').mockReturnValue(mockPaymentId);
+        const createPaymentMock = jest.spyOn(payments, 'createPayment').mockImplementation();
+
+        const result = await handler({
+            body: JSON.stringify(createPaymentPayload)
+        } as unknown as APIGatewayProxyEvent);
+
+        expect(result.statusCode).toBe(422);
+        expect(JSON.parse(result.body)).toEqual({ errors: ["currency is required", "amount should be number"] });
+
+        expect(generateUniqueUUIDMock).not.toHaveBeenCalled();
+        expect(createPaymentMock).not.toHaveBeenCalled();
 
     })
 });
