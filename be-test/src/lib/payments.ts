@@ -23,6 +23,20 @@ export const listPayments = async (): Promise<Payment[]> => {
     return (result.Items as Payment[]) || [];
 };
 
+export const listPaymentsByCurrency = async (currency: string): Promise<Payment[]> => {
+    const result = await DocumentClient.send(
+        new ScanCommand({
+            TableName: 'Payments',
+            FilterExpression: "currency = :currency",
+            ExpressionAttributeValues: {
+                ":currency": currency
+            }
+        })
+    );
+
+    return (result.Items as Payment[]) || [];
+};
+
 export const createPayment = async (payment: Payment) => {
     await DocumentClient.send(
         new PutCommand({
