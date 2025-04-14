@@ -24,6 +24,67 @@ describe('When the user requests the records for a specific payment', () => {
 
         expect(getPaymentMock).toHaveBeenCalledWith(paymentId);
     });
+
+    it('Returns 404 when no payment matching their input parameter.', async () => {
+        const paymentId = randomUUID();
+        const getPaymentMock = jest.spyOn(payments, 'getPayment').mockResolvedValueOnce(null);
+
+        const result = await handler({
+            pathParameters: {
+                id: paymentId,
+            },
+        } as unknown as APIGatewayProxyEvent);
+
+        expect(result.statusCode).toBe(404);
+        expect(JSON.parse(result.body)).toEqual({ "message": "Not found matching payment" });
+
+        expect(getPaymentMock).toHaveBeenCalledWith(paymentId);
+    });
+
+    it('Returns 400 bad request and not call getPayment when paymentId is null', async () => {
+        const getPaymentMock = jest.spyOn(payments, 'getPayment').mockResolvedValueOnce(null);
+
+        const result = await handler({
+            pathParameters: {
+                id: null,
+            },
+        } as unknown as APIGatewayProxyEvent);
+
+        expect(result.statusCode).toBe(400);
+        expect(JSON.parse(result.body)).toEqual({ "message": "paymentId is required" });
+
+        expect(getPaymentMock).not.toHaveBeenCalled();
+    });
+
+    it('Returns 400 bad request and not call getPayment when paymentId is undefined', async () => {
+        const getPaymentMock = jest.spyOn(payments, 'getPayment').mockResolvedValueOnce(null);
+
+        const result = await handler({
+            pathParameters: {
+                id: undefined,
+            },
+        } as unknown as APIGatewayProxyEvent);
+
+        expect(result.statusCode).toBe(400);
+        expect(JSON.parse(result.body)).toEqual({ "message": "paymentId is required" });
+
+        expect(getPaymentMock).not.toHaveBeenCalled();
+    });
+
+    it('Returns 400 bad request and not call getPayment when paymentId is empty', async () => {
+        const getPaymentMock = jest.spyOn(payments, 'getPayment').mockResolvedValueOnce(null);
+
+        const result = await handler({
+            pathParameters: {
+                id: '',
+            },
+        } as unknown as APIGatewayProxyEvent);
+
+        expect(result.statusCode).toBe(400);
+        expect(JSON.parse(result.body)).toEqual({ "message": "paymentId is required" });
+
+        expect(getPaymentMock).not.toHaveBeenCalled();
+    });
 });
 
 afterEach(() => {
