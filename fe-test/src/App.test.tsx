@@ -1,5 +1,8 @@
+import { render, screen } from '@testing-library/react'
+import App from './App';
 describe('App', () => {
-    it('should render', () => {
-        expect(true).toBe(true);
-    });
+    it('renders the App component', () => {
+        render(<App />)
+        expect(screen.getByTitle("Rates")).toBeDefined()
+      })
 });

@@ -51,7 +51,7 @@ const Rates = () => {
                 <div className={classes.heading}>Currency Conversion</div>
 
                 <div className={classes.rowWrapper}>
-                    <div>
+                    <div data-testid="fromCurrency">
                         <DropDown
                             leftIcon={<Flag code={fromCurrency} />}
                             label={'From'}
@@ -76,7 +76,7 @@ const Rates = () => {
                         <div className={classes.rate}>{exchangeRate}</div>
                     </div>
 
-                    <div>
+                    <div data-testid="toCurrency">
                         <DropDown
                             leftIcon={<Flag code={toCurrency} />}
                             label={'To'}

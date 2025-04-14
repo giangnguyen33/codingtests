@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import classes from './DropDown.module.css';
+import { useClickOutside } from '../../Hooks/useClickOutside';
 
 const DropDown = (props) => {
+    const dropdownRef = useRef();
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
         setOpen(!open);
+    };
+
+    const closeDropdown = () => {
+        setOpen(false);
     };
 
     const handleSelect = (key) => {
@@ -14,8 +20,10 @@ const DropDown = (props) => {
         setOpen(false);
     };
 
+    useClickOutside(dropdownRef, closeDropdown);
+
     return (
-        <div className={`${classes.container} ${props.className}`} style={props.style}>
+        <div ref={dropdownRef} className={`${classes.container} ${props.className}`} style={props.style}>
             {props.label && <span>{props.label}</span>}
             <button onClick={handleOpen} className={classes.dropdown}>
                 {props.leftIcon}
@@ -42,7 +50,7 @@ const DropDown = (props) => {
             {open ? (
                 <ul className={classes.menu}>
                     {props.options.map(({ option, key, icon }) => (
-                        <li className={classes['menu-item']}>
+                        <li key={key} className={classes['menu-item']}>
                             <button className={classes.button} onClick={() => handleSelect(key)}>
                                 {icon}
                                 {option}
@@ -56,6 +64,7 @@ const DropDown = (props) => {
 };
 
 // DropDown.propTypes = {
+//     isOpen:PropTypes.boolean
 //     selected: PropTypes.string,
 //     setSelected: PropTypes.func,
 //     label: PropTypes.string,
