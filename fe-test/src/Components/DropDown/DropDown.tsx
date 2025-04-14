@@ -23,7 +23,7 @@ const DropDown = (props) => {
     useClickOutside(dropdownRef, closeDropdown);
 
     return (
-        <div ref={dropdownRef} className={`${classes.container} ${props.className}`} style={props.style}>
+        <div ref={dropdownRef} className={`${classes.container} ${props.className}`} style={props.style} data-testid={`dropdown-${props.id}`}>
             {props.label && <span>{props.label}</span>}
             <button onClick={handleOpen} className={classes.dropdown}>
                 {props.leftIcon}

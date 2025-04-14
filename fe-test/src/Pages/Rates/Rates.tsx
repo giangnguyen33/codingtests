@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DropDown from '../../Components/DropDown';
 import ProgressBar from '../../Components/ProgressBar';
 import Loader from '../../Components/Loader';
@@ -9,12 +9,33 @@ import classes from './Rates.module.css';
 
 import CountryData from '../../Libs/Countries.json';
 import countryToCurrency from '../../Libs/CountryCurrency.json';
+import TextInput from '../../Components/TextInput/TextInput';
 
 let countries = CountryData.CountryCodes;
+
+type ConvertAmount = {
+    amountWithoutMarkup: number,
+    amountWithMarkup: number
+}
+
+const calculateConvertAmount = (amount:number, rate:number)=>{
+    const amountWithoutMarkup = amount*rate;
+    const amountWithMarkup = amountWithoutMarkup - 0.005*rate*amount
+    return  {
+        amountWithoutMarkup,
+        amountWithMarkup
+    }
+   
+}
 
 const Rates = () => {
     const [fromCurrency, setFromCurrency] = useState('AU');
     const [toCurrency, setToCurrency] = useState('US');
+    const [amount, setAmount] = useState(0);
+    const [convertAmount, setConvertAmount] = useState({
+        amountWithoutMarkup:0,
+        amountWithMarkup:0
+    })
 
     const [exchangeRate, setExchangeRate] = useState(0.7456);
     const [progression, setProgression] = useState(0);
@@ -45,14 +66,30 @@ const Rates = () => {
         });
     });
 
+    const handleAmountOnchange = (inputAmount:string)=>{
+        if (!Number.isNaN(inputAmount)) 
+        {
+            setAmount(Number(inputAmount));
+        } else {
+            setAmount(0)
+        }       
+        
+    }
+
+    useEffect(() => {
+        setConvertAmount(calculateConvertAmount(Number(amount),exchangeRate));
+        
+     }, [amount]);
+
     return (
         <div className={classes.container}>
             <div className={classes.content}>
                 <div className={classes.heading}>Currency Conversion</div>
 
                 <div className={classes.rowWrapper}>
-                    <div data-testid="fromCurrency">
+                    <div>
                         <DropDown
+                            id='fromCurrency'
                             leftIcon={<Flag code={fromCurrency} />}
                             label={'From'}
                             selected={countryToCurrency[fromCurrency as keyof typeof countryToCurrency]}
@@ -73,11 +110,12 @@ const Rates = () => {
                             <img src="/img/icons/Transfer.svg" alt="Transfer icon" />
                         </div>
 
-                        <div className={classes.rate}>{exchangeRate}</div>
+                        <div className={classes.rate} id="exchangeRate">{exchangeRate}</div>
                     </div>
 
-                    <div data-testid="toCurrency">
+                    <div>
                         <DropDown
+                            id='toCurrency'
                             leftIcon={<Flag code={toCurrency} />}
                             label={'To'}
                             selected={countryToCurrency[toCurrency as keyof typeof countryToCurrency]}
@@ -92,6 +130,13 @@ const Rates = () => {
                             style={{ marginLeft: '20px' }}
                         />
                     </div>
+                </div>
+                <div></div>
+
+                <div className={classes.rowWrapper}>
+                    <div><TextInput label='Amount' id="amount" onChange={handleAmountOnchange}></TextInput></div>
+                    <div><TextInput label='Convert amount without markup' id="convertAmount" value={convertAmount?.amountWithoutMarkup} readonly></TextInput></div>
+                    <div><TextInput label='Convert amount with markup' id="convertAmountWithMarkup" value={convertAmount?.amountWithMarkup} readonly></TextInput></div>
                 </div>
 
                 <ProgressBar
