@@ -31,7 +31,11 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     }
 
     const payment: Payment = { ...paymentPayload, id: generateUniqueUUID() }
-
-    await createPayment(payment);
-    return buildResponse(201, { paymentId: payment.id });
+    try {
+        await createPayment(payment);
+        return buildResponse(201, { paymentId: payment.id });
+    } catch (error) {
+        console.error("Error when create payment", error)
+        throw error;
+    }
 };

@@ -9,7 +9,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         const payments = currencyParam ? await listPaymentsByCurrency(currencyParam) : await listPayments();
         return buildResponse(200, { data: payments });
     } catch (error) {
+        console.error(`error when list payments with parameter ${currencyParam}`, error)
         throw error;
     }
-
 };

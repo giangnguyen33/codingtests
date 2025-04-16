@@ -9,13 +9,18 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         return buildResponse(400, { message: "paymentId is required" });
     }
 
-    const payment = await getPayment(paymentId);
-    
-    if (payment) {
-        return buildResponse(200, payment);
+    try {
+        const payment = await getPayment(paymentId);
+
+        if (payment) {
+            return buildResponse(200, payment);
+        }
+
+        return buildResponse(404, { message: "Not found matching payment" });
+
+    } catch (error) {
+        console.error(`Error when fetching payment with paymentId: ${paymentId}`, error)
+        throw error
     }
-
-    return buildResponse(404, { message: "Not found matching payment" });
-
 };
 

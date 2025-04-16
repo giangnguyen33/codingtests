@@ -85,6 +85,19 @@ describe('When the user requests the records for a specific payment', () => {
 
         expect(getPaymentMock).not.toHaveBeenCalled();
     });
+
+    it('should throw error when got error from DB', async () => {
+        jest.spyOn(payments, 'getPayment').mockImplementationOnce(() => {
+            throw new Error('DB mock error');
+        });
+
+        await expect(
+            handler({
+                pathParameters: {
+                    id: 1,
+                },
+            } as unknown as APIGatewayProxyEvent)).rejects.toThrow('DB mock error');
+    })
 });
 
 afterEach(() => {

@@ -74,6 +74,21 @@ describe('When the user create payment', () => {
         expect(createPaymentMock).not.toHaveBeenCalled();
 
     })
+
+    it('should throw error when got error from DB', async () => {
+        const createPaymentPayload = {
+            currency: 'AUD',
+            amount: '1',
+        };
+        jest.spyOn(payments, 'createPayment').mockImplementationOnce(() => {
+            throw new Error('DB mock error');
+        });
+
+        await expect(
+            handler({
+                body: JSON.stringify(createPaymentPayload)
+            } as unknown as APIGatewayProxyEvent)).rejects.toThrow('DB mock error');
+    })
 });
 
 afterEach(() => {
