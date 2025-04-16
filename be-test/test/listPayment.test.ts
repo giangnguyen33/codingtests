@@ -30,7 +30,7 @@ describe('When the user requests the records for a specific payment', () => {
         const listPaymentsMock = jest.spyOn(payments, 'listPaymentsByCurrency').mockResolvedValueOnce(mockPayments);
 
         const result = await handler({
-            pathParameters: {
+            queryStringParameters: {
                 currency: 'SGD',
             },
         } as unknown as APIGatewayProxyEvent);

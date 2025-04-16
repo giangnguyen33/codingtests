@@ -27,9 +27,9 @@ export const listPaymentsByCurrency = async (currency: string): Promise<Payment[
     const result = await DocumentClient.send(
         new ScanCommand({
             TableName: 'PaymentsTable',
-            FilterExpression: "currency = :currency",
+            FilterExpression: 'currency = :currency',
             ExpressionAttributeValues: {
-                ":currency": currency
+                ':currency': currency
             }
         })
     );
