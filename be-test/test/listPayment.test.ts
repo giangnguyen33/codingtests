@@ -7,7 +7,7 @@ describe('When the user requests the records for a specific payment', () => {
 
     it('it should return all payments if no query parameters', async () => {
         const mockPayments = [{
-            id: randomUUID(),
+            paymentId: randomUUID(),
             currency: 'AUD',
             amount: 2000,
         }];
@@ -23,7 +23,7 @@ describe('When the user requests the records for a specific payment', () => {
 
     it('it should return payments by currency if query parameters has currency param', async () => {
         const mockPayments = [{
-            id: randomUUID(),
+            paymentId: randomUUID(),
             currency: 'SGD',
             amount: 2000,
         }];
@@ -45,6 +45,7 @@ describe('When the user requests the records for a specific payment', () => {
         jest.spyOn(payments, 'listPaymentsByCurrency').mockImplementationOnce(() => {
             throw new Error('DB mock error');
         });
+        jest.spyOn(console, 'error').mockImplementation(() => { });
 
         await expect(
             handler({

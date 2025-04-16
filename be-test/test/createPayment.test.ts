@@ -83,6 +83,7 @@ describe('When the user create payment', () => {
         jest.spyOn(payments, 'createPayment').mockImplementationOnce(() => {
             throw new Error('DB mock error');
         });
+        jest.spyOn(console, 'error').mockImplementation(() => { });
 
         await expect(
             handler({
