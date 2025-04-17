@@ -26,7 +26,7 @@ describe('When the user create payment', () => {
         expect(createPaymentMock).toHaveBeenCalledWith({
             amount: 2000,
             currency: "AUD",
-            id: "mock paymentId",
+            paymentId: "mock paymentId",
         });
 
     })

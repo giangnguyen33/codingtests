@@ -69,7 +69,7 @@ export const createPayment = async (payment: Payment) => {
 };
 
 export type Payment = {
-    id: string;
+    paymentId: string;
     amount: number;
     currency: string;
 };
